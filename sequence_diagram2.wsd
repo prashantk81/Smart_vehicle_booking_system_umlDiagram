@@ -1,0 +1,26 @@
+@startuml
+
+actor User
+
+User -> TripManagement: endTrip()
+
+TripManagement -> TripManagement: calculateFare()
+
+User -> PaymentManager: makePaymentByWallet()
+PaymentManager --> Wallet: getCurrentBalance()
+Wallet -> PaymentManager: currentBalance
+
+alt Sufficient funds in wallet
+  PaymentManager -> PaymentManager: deductFromWallet(fare)
+else Insufficient funds
+  PaymentManager -> User: notifyInsufficientFunds()
+  PaymentManager -> AddMoneyIntowallet: addMoneyToWallet(double)
+  User -> PaymentManager: makePaymentByWallet()
+  PaymentManager -> PaymentManager: deductFromWallet(fare)
+end
+
+User -> PaymentManager: makePaymentByPaymentMethod()
+PaymentManager -> PaymentMethod: doViaCard or UPI apps
+PaymentMethod -> PaymentManager: paymentId
+
+@enduml

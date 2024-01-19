@@ -1,0 +1,24 @@
+@startuml
+
+actor User
+
+alt new user
+  User -> UserAccountManager: createAccount()
+  User -> UserAccountManager: uploadId(Document)
+else already existing user
+ User -> UserAccountManager: login() 
+end
+
+User -> DockingStation: availableVehicleList()
+DockingStation -> User: vector<SmartVehicle>
+
+User -> DockingStation: scanQR()
+User -> TripManagement: startTrip()
+User -> TripManagement: endTrip()
+
+User -> RatingAndFeedback: provideFeedbackAndRating(String, int)
+User -> TripManagement: ratingAndFeedback = RatingAndFeedback
+
+TripManagement --> SmartVehicle: ratingAndFeedback
+
+@enduml

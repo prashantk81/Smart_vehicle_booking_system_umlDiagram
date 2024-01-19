@@ -1,0 +1,170 @@
+@startuml
+
+class SmartVehicle {
+  -vehicleNum: int
+  -noOfRides: int
+  -rating: int
+  -isParked: Boolean
+  -supportManualPdf: String
+  -basePrice: double
+  -qrCode: QRCode
+  -availabeAtDockingStation: DockingStation
+  -ratingAndFeedback: RatingAndFeedback
+}
+class RatingAndFeedback
+{
+    -feedbackByUser: String
+    -ratingByUser: int
+}
+class Bike
+{
+    -diatanceTravelled: double
+    -fuelPercentage: int
+}
+class Bicycle
+{
+}
+class Moped
+{ 
+    -diatanceTravelled: double
+    -chargingPercentage: int
+}
+class QRCode
+{
+    - wayToConnect: String
+}
+
+class User {
+  -userId: int
+  -userName: String
+  -email: String
+  -password: String
+  -idDocument: Document
+  -userWallet: Wallet
+}
+
+class Document {
+  -documentType: String
+  -documentData: String
+}
+class Wallet
+{
+    -walletBalance: double
+    -paymentHistory: vector<String>
+    +getCurrentBalance() :double
+}
+
+class AddMoneyIntowallet
+{
+    -amount: int
+    +addMoneyToWallet(): void
+}
+class PaymentMethod
+{
+    -paymentId: String
+    -paymentGateway: String
+}
+class creditCardOrDebitCard
+{
+    -linkToPayViaCard: string
+}
+class upiApp
+{
+    -linkToPayViaUpi: string
+}
+
+class UserAccountManager
+{
+  -user : User
+  +createAccount(): void
+  +login(): void
+  +uploadId(document: Document): void
+  +viewTripHistory(): vector<String>
+}
+
+class Staff
+{
+    -staffDept: String
+}
+class Student
+{
+    -rollNum: int
+    -enrolledProgramme: String
+    -branch: String
+}
+class Teacher
+{
+    -dept: String
+}
+
+class DockingStation
+{
+    -dockingStationId: int
+    -dockeingstationLocation: String
+    -capacity: int
+    -availableVehicleList: vector<SmartVehicle>
+    -dataLogs: String
+    -isMaintenanceDone: Boolean
+    -securityUp: Boolean
+    -maintenanceStatus: String
+}
+
+class ParkingLotManager {
+  -parkingLotId: int
+  +updateVehicleStatus(): void
+  +manageVehicleLocations(): void
+  +trackBikeAvailability(): void
+}
+class PaymentManager {
+    -paymentId: int
+    -autoDeductedEnabled: Boolean
+    +totalPrice(): int
+    +makePaymentByWallet(): void
+    +makePaymentByPaymentMethod(): void
+}
+class TripManagement
+{
+    -tripId: int
+    -vehicleType: SmartVehicle
+    -user: User
+    -distanceCovered: int
+    -timeTakenByTrip: int
+    -ratingAndFeedback: RatingAndFeedback
+    +scanQR(): void
+    +priceCalculator(): double
+    +startTrip(): void
+    +endTrip(): void
+}
+
+TripManagement "1" *-- "1" RatingAndFeedback
+TripManagement "0..*" --* "0..*" SmartVehicle
+
+User "1" *-- "0..*" TripManagement
+TripManagement ..>QRCode
+PaymentManager ..> PaymentMethod
+PaymentManager ..> Wallet
+PaymentManager ..> TripManagement
+User <|-- Staff
+User <|-- Teacher
+User <|-- Student
+
+User "1" *-- "0..1" Document
+UserAccountManager "1" --* "1..*" User
+User "1" *--"0..1" Wallet
+
+Wallet <.. AddMoneyIntowallet
+SmartVehicle <|-- Moped
+SmartVehicle <|-- Bicycle
+SmartVehicle <|-- Bike
+SmartVehicle "1" *-- "1" QRCode
+
+SmartVehicle "0..*" --o "1" DockingStation
+ParkingLotManager ..> DockingStation
+ParkingLotManager ..> SmartVehicle
+
+PaymentMethod <|-- creditCardOrDebitCard
+PaymentMethod <|-- upiApp
+
+AddMoneyIntowallet ..> PaymentMethod
+
+@enduml
